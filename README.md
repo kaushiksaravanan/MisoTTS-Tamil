@@ -78,6 +78,8 @@ The model is designed for high-quality conversational speech generation.
 This repository contains the inference
 code, model definition, and setup instructions for running Miso TTS locally.
 
+> **Language support:** Miso TTS 8B currently supports **English only**.
+
 ---
 
 ## Model Summary
@@ -95,6 +97,7 @@ code, model definition, and setup instructions for running Miso TTS locally.
 | Audio codebooks     | `32`            |
 | Audio tokenizer     | Mimi            |
 | Max sequence length | `2,048`         |
+| Languages           | English only    |
 
 ### Architecture
 
