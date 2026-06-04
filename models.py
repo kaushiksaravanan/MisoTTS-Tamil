@@ -146,8 +146,15 @@ class Model(
         dtype = next(self.parameters()).dtype
         device = next(self.parameters()).device
 
-        self.backbone.setup_caches(max_batch_size, dtype)
-        self.decoder.setup_caches(max_batch_size, dtype, decoder_max_seq_len=self.config.audio_num_codebooks)
+        # torchtune's KVCache builds its k/v/cache_pos buffers with bare
+        # torch.zeros/torch.arange (no device arg), so they default to CPU.
+        # setup_caches runs after the model is already on `device`, and nothing
+        # moves these new buffers afterward, which would leave the caches on CPU
+        # while activations are on CUDA. Create them under the device context so
+        # the factory calls inside torchtune land on the model's device.
+        with device:
+            self.backbone.setup_caches(max_batch_size, dtype)
+            self.decoder.setup_caches(max_batch_size, dtype, decoder_max_seq_len=self.config.audio_num_codebooks)
 
         self.register_buffer("backbone_causal_mask", _create_causal_mask(self.backbone.max_seq_len, device))
         self.register_buffer("decoder_causal_mask", _create_causal_mask(self.config.audio_num_codebooks, device))
