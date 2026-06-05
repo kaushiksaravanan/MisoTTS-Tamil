@@ -196,11 +196,30 @@ Hugging Face cache resumes from files that already completed.
 
 ---
 
-## Deployment Notes
+## System Requirements
 
-Miso TTS 8B is a large model. For best results, use a CUDA GPU with sufficient
-VRAM for the checkpoint precision you are loading. The default inference path
-uses `torch.bfloat16`.
+Miso TTS 8B is a **large** model (~8.2B parameters across the backbone, audio
+decoder, embeddings, and heads). It is **not** a lightweight CPU model — plan for
+a high-VRAM GPU for interactive use.
+
+The numbers below are approximate and cover the model weights plus headroom for
+the Mimi codec, the SilentCipher watermarker, the KV cache, and activations.
+
+| Precision        | Weights (approx.) | Recommended VRAM | Example GPUs                       |
+| ---------------- | ----------------- | ---------------- | ---------------------------------- |
+| `bfloat16`/`fp16`| ~16 GB            | **24 GB**        | RTX 3090 / 4090, A5000, L4 (24 GB) |
+| `float32`        | ~33 GB            | **40 GB+**       | A100 40 GB, A6000 48 GB, H100      |
+
+**CPU:** inference runs but is slow. Budget at least ~20 GB RAM for `bfloat16`
+and ~40 GB for `float32`.
+
+**Disk:** the first run downloads ~30–40 GB total — the model checkpoint plus the
+Mimi codec, the SilentCipher watermarker, and the Llama 3.2 tokenizer — into the
+Hugging Face cache. Make sure you have the free space before starting.
+
+GPU inference defaults to `torch.bfloat16`. A 24 GB card comfortably fits the
+bf16 weights; smaller consumer GPUs (4–16 GB) are not sufficient for the full
+model.
 
 ---
 
