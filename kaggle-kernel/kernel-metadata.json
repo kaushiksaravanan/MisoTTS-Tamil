@@ -1,0 +1,17 @@
+{
+  "id": "kaushiksarav/misotts-tamil-finetune",
+  "title": "MisoTTS Tamil Fine-tune",
+  "code_file": "misotts-tamil-train.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": [
+    "vickythefire2000/indic-tts-tamil-female",
+    "vickythefire2000/indic-tts-tamil-male"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}
