@@ -15,6 +15,8 @@ import torch
 import torchaudio
 from torch.utils.data import Dataset, DataLoader
 
+from training.tamil_normalizer import normalize_tamil_text, is_tamil_text
+
 
 class TamilTTSDataset(Dataset):
     """Dataset that lazily loads audio and produces tokenized frames."""
@@ -55,6 +57,10 @@ class TamilTTSDataset(Dataset):
         audio_path = entry["audio_path"]
         text = entry["text"]
         speaker = self.speaker_map.get(entry["speaker"], 0)
+
+        # Normalize Tamil text
+        if is_tamil_text(text):
+            text = normalize_tamil_text(text)
 
         waveform, sr = torchaudio.load(audio_path)
         if sr != 24000:
