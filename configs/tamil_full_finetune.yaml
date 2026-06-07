@@ -1,0 +1,36 @@
+# MisoTTS Tamil - Full Fine-tune Configuration
+# ==============================================
+#
+# For maximum Tamil quality. Requires 2x A100 80GB or 1x H100.
+# Use this after LoRA training shows good results and you want
+# to push for the absolute best Tamil pronunciation and prosody.
+
+# Model
+base_model: "MisoLabs/MisoTTS"
+
+# Training strategy - full fine-tune of entire model
+strategy: "full"
+gradient_checkpointing: true
+
+# Data
+manifest_path: "processed/manifest.jsonl"
+
+# Training hyperparameters
+batch_size: 1
+gradient_accumulation_steps: 16  # effective batch size = 16
+num_epochs: 8
+learning_rate: 5.0e-5  # lower for full fine-tune
+weight_decay: 0.01
+max_grad_norm: 0.5
+warmup_steps: 500
+
+# Schedule
+save_every_epochs: 2
+save_every_steps: 1000
+log_interval: 10
+
+# DataLoader
+num_workers: 4
+
+# Output
+output_dir: "outputs/tamil-full-v1"

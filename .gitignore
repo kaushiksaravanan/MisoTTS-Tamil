@@ -44,3 +44,11 @@ context_audio.wav
 *.pt
 *.ckpt
 *.safetensors
+
+# Training data and outputs
+data/
+processed/
+outputs/
+wandb/
+*.zip
+dataset-metadata.json

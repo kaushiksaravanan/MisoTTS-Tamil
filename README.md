@@ -78,7 +78,66 @@ The model is designed for high-quality conversational speech generation.
 This repository contains the inference
 code, model definition, and setup instructions for running Miso TTS locally.
 
-> **Language support:** Miso TTS 8B currently supports **English only**.
+> **Language support:** This fork adds **Tamil (தமிழ்)** support via fine-tuning. Base model supports English.
+
+---
+
+## Tamil Fine-tuning (This Fork)
+
+This is a fine-tuned version of MisoTTS 8B for **Tamil text-to-speech**. The model is trained on:
+- **Indic TTS Tamil** (IIT Madras) - Studio-quality male and female speakers (~20h)
+- **IISc-MILE Tamil ASR Corpus** - 150+ hours, 531 speakers
+- **Common Voice Tamil** - Community-contributed diverse recordings
+
+### Quick Start (Tamil)
+
+```python
+from infer_tamil import load_finetuned_model, generate_tamil_speech
+
+generator = load_finetuned_model(
+    model_dir="outputs/tamil-lora-v1",
+    device="cuda",
+)
+
+audio = generate_tamil_speech(
+    generator,
+    text="வணக்கம், எப்படி இருக்கீங்க?",
+    speaker=0,
+)
+```
+
+### Training Pipeline
+
+```bash
+# 1. Download datasets from Kaggle
+python download_data.py --datasets all
+
+# 2. Preprocess (resample to 24kHz, create manifest)
+python prepare_data.py --data-dir data/ --output-dir processed/
+
+# 3. Fine-tune with LoRA (single A100 80GB)
+python -m training.train --config configs/tamil_finetune.yaml
+
+# 4. Evaluate
+python evaluate.py --audio-dir outputs/tamil-lora-v1/generated/
+
+# 5. Run Tamil inference
+python infer_tamil.py --text "தமிழ் ஒரு பழமையான மொழி" --interactive
+```
+
+### Train on Kaggle (Free GPU)
+
+1. Create a Kaggle notebook with **GPU T4 x2**
+2. Add datasets: `vickythefire2000/indic-tts-tamil-female`, `vickythefire2000/indic-tts-tamil-male`
+3. Upload and run `train_on_kaggle.py`
+
+### Architecture
+
+Fine-tuning strategy:
+- **Backbone (8B)**: LoRA rank-32 on attention layers (preserves multilingual capability)
+- **Text Embeddings**: Full fine-tune (Tamil Unicode needs representation)
+- **Decoder (300M)**: Full fine-tune (adapts to Tamil prosody patterns)
+- **Audio Heads**: Full fine-tune (Tamil phoneme-to-audio mapping)
 
 ---
 
@@ -97,7 +156,7 @@ code, model definition, and setup instructions for running Miso TTS locally.
 | Audio codebooks     | `32`            |
 | Audio tokenizer     | Mimi            |
 | Max sequence length | `2,048`         |
-| Languages           | English only    |
+| Languages           | English + Tamil |
 
 ### Architecture
 

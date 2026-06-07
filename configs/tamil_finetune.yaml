@@ -1,0 +1,44 @@
+# MisoTTS Tamil Fine-tuning Configuration
+# ==========================================
+#
+# Strategy: LoRA on backbone + full fine-tune decoder/embeddings
+# Target: Tamil TTS with natural prosody and pronunciation
+# GPU: A100 80GB (LoRA) or 2xA100 (full fine-tune)
+#
+# Datasets used:
+#   - Indic TTS Tamil Female (IIT Madras, ~10h, studio quality)
+#   - Indic TTS Tamil Male (IIT Madras, ~10h, studio quality)
+#   - IISc-MILE Tamil ASR Corpus (150h, 531 speakers, diverse)
+#   - Common Voice Tamil (community contributed)
+
+# Model
+base_model: "MisoLabs/MisoTTS"  # HuggingFace repo or local path
+
+# Training strategy
+strategy: "lora"  # "lora" or "full"
+lora_rank: 32
+lora_alpha: 64.0
+gradient_checkpointing: true
+
+# Data
+manifest_path: "processed/manifest.jsonl"
+
+# Training hyperparameters
+batch_size: 2
+gradient_accumulation_steps: 8  # effective batch size = 16
+num_epochs: 15
+learning_rate: 2.0e-4  # higher for LoRA
+weight_decay: 0.01
+max_grad_norm: 1.0
+warmup_steps: 200
+
+# Schedule
+save_every_epochs: 3
+save_every_steps: 500
+log_interval: 10
+
+# DataLoader
+num_workers: 4
+
+# Output
+output_dir: "outputs/tamil-lora-v1"

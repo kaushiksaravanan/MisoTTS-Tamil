@@ -3,9 +3,9 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "miso-tts"
-version = "0.1.0"
-description = "Miso TTS 8B inference code."
+name = "miso-tts-tamil"
+version = "0.2.0"
+description = "MisoTTS 8B fine-tuned for Tamil text-to-speech."
 readme = "README.md"
 requires-python = ">=3.10,<3.13"
 license = { file = "LICENSE" }
@@ -22,5 +22,17 @@ dependencies = [
     "silentcipher @ git+https://github.com/SesameAILabs/silentcipher@d46d7d0893a583d8968ab3a6626e2289faec9152",
 ]
 
+[project.optional-dependencies]
+train = [
+    "pyyaml>=6.0",
+    "safetensors>=0.4.0",
+    "kaggle>=1.6.0",
+]
+eval = [
+    "openai-whisper>=20231117",
+    "speechbrain>=1.0.0",
+]
+
 [tool.setuptools]
-py-modules = ["generator", "models", "moshi_compat", "run_misotts", "watermarking"]
+py-modules = ["generator", "models", "moshi_compat", "run_misotts", "watermarking", "infer_tamil", "evaluate", "download_data", "prepare_data", "train_on_kaggle"]
+packages = ["training"]
