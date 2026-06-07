@@ -1,6 +1,6 @@
 {
-  "id": "kaushiksarav/misotts-tamil-finetune",
-  "title": "MisoTTS Tamil Fine-tune",
+  "id": "kaushiksarav/misotts-tamil-fine-tune",
+  "title": "misotts-tamil-fine-tune",
   "code_file": "misotts-tamil-train.py",
   "language": "python",
   "kernel_type": "script",
