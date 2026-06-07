@@ -16,6 +16,7 @@ import torchaudio
 from torch.utils.data import Dataset, DataLoader
 
 from training.tamil_normalizer import normalize_tamil_text, is_tamil_text
+from training.tamil_phonemizer import romanize_tamil
 
 
 class TamilTTSDataset(Dataset):
@@ -30,6 +31,7 @@ class TamilTTSDataset(Dataset):
         max_audio_frames: int = 750,  # ~60s at 12.5Hz Mimi frame rate
         max_text_tokens: int = 256,
         speaker_map: Optional[dict] = None,
+        romanize: bool = False,
     ):
         self.entries = []
         with open(manifest_path, "r", encoding="utf-8") as f:
@@ -42,6 +44,7 @@ class TamilTTSDataset(Dataset):
         self.num_codebooks = num_codebooks
         self.max_audio_frames = max_audio_frames
         self.max_text_tokens = max_text_tokens
+        self.romanize = romanize
 
         if speaker_map is None:
             speakers = sorted(set(e["speaker"] for e in self.entries))
@@ -61,6 +64,8 @@ class TamilTTSDataset(Dataset):
         # Normalize Tamil text
         if is_tamil_text(text):
             text = normalize_tamil_text(text)
+            if self.romanize:
+                text = romanize_tamil(text)
 
         waveform, sr = torchaudio.load(audio_path)
         if sr != 24000:

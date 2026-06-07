@@ -313,13 +313,17 @@ def main():
     # Load dataset
     print("Loading dataset...")
     manifest_path = config.get("manifest_path", "processed/manifest.jsonl")
+    romanize = config.get("romanize_input", False)
     dataset = TamilTTSDataset(
         manifest_path=manifest_path,
         text_tokenizer=text_tokenizer,
         audio_tokenizer=mimi,
         num_codebooks=MISO_TTS_8B_CONFIG.audio_num_codebooks,
+        romanize=romanize,
     )
     print(f"  Dataset size: {len(dataset)} utterances")
+    if romanize:
+        print(f"  Mode: Romanized Tamil (ISO 15919)")
 
     collator = TamilTTSCollator(
         text_tokenizer=text_tokenizer,

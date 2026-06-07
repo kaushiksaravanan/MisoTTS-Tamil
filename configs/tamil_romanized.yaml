@@ -1,0 +1,49 @@
+# MisoTTS Tamil - Romanized Text Training Config
+# ================================================
+#
+# Uses ISO 15919 romanization of Tamil text for input.
+# This gives significantly better tokenizer coverage since
+# Llama 3.2 was pretrained on romanized Indian text (Tanglish).
+#
+# The model will accept romanized Tamil input at inference time.
+# A separate Tamil-script-to-romanization step handles the conversion.
+#
+# This produces higher quality speech because:
+# 1. Better token representations (subwords vs byte-fallback)
+# 2. More efficient sequence packing (fewer tokens per word)
+# 3. Leverages existing Llama multilingual knowledge
+
+# Model
+base_model: "MisoLabs/MisoTTS"
+
+# Training strategy
+strategy: "lora"
+lora_rank: 64  # Higher rank for romanized (more capacity needed)
+lora_alpha: 128.0
+gradient_checkpointing: true
+
+# Text processing
+romanize_input: true  # Use ISO 15919 romanization
+
+# Data
+manifest_path: "processed/manifest.jsonl"
+
+# Training hyperparameters
+batch_size: 2
+gradient_accumulation_steps: 8
+num_epochs: 20  # More epochs for romanized (converges slower but better)
+learning_rate: 3.0e-4
+weight_decay: 0.01
+max_grad_norm: 1.0
+warmup_steps: 300
+
+# Schedule
+save_every_epochs: 4
+save_every_steps: 500
+log_interval: 10
+
+# DataLoader
+num_workers: 4
+
+# Output
+output_dir: "outputs/tamil-romanized-lora-v1"
